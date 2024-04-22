@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Book } from '@prisma/client';
+import { Book, UserOnBooks } from '@prisma/client';
 
 @Injectable()
 export class BooksService {
@@ -45,7 +45,7 @@ export class BooksService {
         }
       }
 
-      public async updateById(
+    public async updateById(
         id: Book['id'], 
         bookData: Omit<Book, 'id' | 'createdAt' | 'updatedAt'>
     ): Promise<Book> {
@@ -66,5 +66,21 @@ export class BooksService {
             throw new ConflictException('Book with this title is already in base');
           throw error;
         }
+    }
+
+    public async likedBook(likeBookData: Omit<UserOnBooks, 'id'>): Promise<Book> {
+      const { userId, bookId } = likeBookData;
+      return await this.prismaService.book.update({
+        where: { id: bookId },
+        data: {
+          users: {
+            create: {
+              user: {
+                connect: { id: userId },
+              },
+            },
+          },
+        },
+      });
     }
 }
