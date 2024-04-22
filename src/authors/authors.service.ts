@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Author } from '@prisma/client'
-import { PrismaService } from 'src/shared/services/prisma.service';
 
 @Injectable()
 export class AuthorsService {
@@ -16,7 +16,7 @@ export class AuthorsService {
         });
     }
 
-    public deleteById(id: Author['id']): Promise<Author | null> {
+    public deleteById(id: Author['id']): Promise<Author> {
         return this.prismaService.author.delete({
             where: { id},
         });

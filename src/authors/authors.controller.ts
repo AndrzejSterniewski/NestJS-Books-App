@@ -7,10 +7,12 @@ import {
     Body,
     NotFoundException,
     ParseUUIDPipe,
+    UseGuards,
     Delete, } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDTO } from './dtos/create-author.dto';
 import { UpdateAuthorDTO } from './dtos/update-author.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('authors')
 export class AuthorsController {
@@ -29,6 +31,7 @@ export class AuthorsController {
     }
 
     @Delete('/:id')
+    @UseGuards(JwtAuthGuard)
     async deleteById(
         @Param('id', new ParseUUIDPipe()) id: string) {
             if (!(await this.authorsService.getById(id)))
@@ -39,12 +42,14 @@ export class AuthorsController {
     }
 
     @Post('/')
+    @UseGuards(JwtAuthGuard)
     create(
         @Body() authorData: CreateAuthorDTO) {
             return this.authorsService.create(authorData);
         }
 
     @Put('/:id')
+    @UseGuards(JwtAuthGuard)
     async update(
         @Param('id', new ParseUUIDPipe()) id: string,
         @Body() authorData: UpdateAuthorDTO,

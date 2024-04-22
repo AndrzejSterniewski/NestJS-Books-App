@@ -30,5 +30,24 @@ model Book {
   updatedAt   DateTime @updatedAt
 
   authorId    String
-  author      Author? @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id       String    @id @default(uuid())
+  email    String    @unique
+  role     Role      @default(USER)
+  password Password?
+}
+
+model Password {
+  id       String @id @default(uuid())
+  hashedPassword String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @unique
 }
